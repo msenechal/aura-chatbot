@@ -1,0 +1,22 @@
+.loader {
+
+  display: block;
+  margin: 7px auto;
+  position: relative;
+}
+
+li {
+  all: revert;
+}
+
+ol {
+  all: revert;
+}
+
+ul {
+  all: revert;
+}
+
+a {
+  all: revert;
+}

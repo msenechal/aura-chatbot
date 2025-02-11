@@ -1,0 +1,11 @@
+ {
+    "listMessages": [
+    {
+      "id": 1,
+      "message": "Hello! I am a resource manager expert, and I can help you find the best consultants for your specific needs. Please provide me with the details of your request, including the use cases, region, and any required or nice-to-have skills. I'll then provide you with a list of consultants who are the best fit based on their experience and skills.",
+      "user": "chatbot",
+      "datetime": "01/01/2024 00:00:00",
+      "typeMessage": "First"
+    }
+    ]
+ }
