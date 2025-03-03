@@ -3,7 +3,7 @@ from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from neo4j_graphrag.generation import GraphRAG
 from neo4j_graphrag.llm import OpenAILLM
 from neo4j_graphrag.retrievers import VectorCypherRetriever
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,7 +18,7 @@ NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 VECTOR_INDEX_NAME = os.getenv("VECTOR_INDEX_NAME")
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
+ALLOWED_ORIGINS = ["https://sites.google.com/neotechnology.com/", "https://*.googleusercontent.com", "https://neo4j-aura-qa-chatbot.com"]
 
 api_key = os.getenv("OPENAI_API_KEY")
 
@@ -58,10 +58,15 @@ class Question(BaseModel):
     question: str
 
 @app.post("/ask")
-def ask_question(question: Question):
+def ask_question(request: Request, question: Question):
     try:
+        referer = request.headers.get("referer", "")
+        if not any(allowed in referer for allowed in ALLOWED_ORIGINS):
+            raise HTTPException(status_code=403, detail="Forbidden: Invalid referrer")
+
         input = question.question
-        response = rag.search(query_text=input, retriever_config={"top_k": 3}, return_context=True)
+        response = rag.search(query_text=input, retriever_config={"top_k": 10}, return_context=True)
+        print(f"{question.question}")
         src = []
         for item in response.retriever_result.items:
             src.append(item.metadata)

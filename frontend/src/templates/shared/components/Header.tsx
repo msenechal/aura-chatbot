@@ -1,6 +1,6 @@
 import { MoonIconOutline, SunIconOutline, QuestionMarkCircleIconOutline } from '@neo4j-ndl/react/icons';
 import { Typography, IconButton, Tabs, Switch, Logo } from '@neo4j-ndl/react';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ThemeWrapperContext } from '../../../context/ThemeWrapper';
 
 type UserProps = {
@@ -40,6 +40,10 @@ export default function Header({
     });
     themeUtils.toggleColorMode();
   };
+
+  const handleURLClick = useCallback((url: string) => {
+    window.open(url, '_blank');
+  }, []);
 
   return (
     <div className='n-bg-palette-neutral-bg-weak p-1 border-b-2 border-[rgb(var(--theme-palette-neutral-border-weak))] h-16'>
@@ -103,7 +107,7 @@ export default function Header({
                   </span>
                 )}
               </IconButton>
-              <IconButton className='hidden md:inline-flex' aria-label='Help' isClean size='large' ariaLabel=''>
+              <IconButton onClick={() => handleURLClick("https://neo4j.com/labs/neo4j-needle-starterkit/")} className='hidden md:inline-flex' aria-label='Help' isClean size='large' ariaLabel=''>
                 <QuestionMarkCircleIconOutline />
               </IconButton>
             </div>

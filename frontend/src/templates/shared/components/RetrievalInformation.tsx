@@ -78,10 +78,10 @@ function RetrievalInformation({ sources, model, entities, timeTaken }) {
   function run() {
     const formattedSources = sources.map((source) => `"${source}"`).join(',');
     const query2 = `  
-    MATCH (a:Chunk) WHERE elementId(a) in [${formattedSources}]
+    MATCH (a:Chunk)-[r2:PART_OF]-(d:Document) WHERE elementId(a) in [${formattedSources}]
     MATCH (a)-[r]-(b:__Entity__)
     WHERE elementId(b) IN [${formattedSources}]
-    RETURN a, r, b LIMIT 100
+    RETURN a, r, b, r2, d LIMIT 100
 
     `;
     setDriver(uri, username, password).then((isSuccessful) => {
@@ -189,9 +189,9 @@ function RetrievalInformation({ sources, model, entities, timeTaken }) {
             }}>
               <Drawer.Header>Node details</Drawer.Header>
               <Drawer.Body className='max-w-[300px]'>
-                {expandedNode?.captions[0]?.value?.includes('Chunk') ? (<Typography variant='h5'>Chunk text: </Typography>) : (<Typography variant='h5'>Entity description: </Typography>)}
+                {expandedNode?.captions[0]?.value?.includes('Chunk') ? (<Typography variant='h5'>Chunk text: </Typography>) : expandedNode?.captions[0]?.value?.includes('Document') ? (<Typography variant='h5'>Document: </Typography>) : (<Typography variant='h5'>Entity description: </Typography>)}
                 <ReactMarkdown>
-                  {expandedNode?.properties?.text ?? expandedNode?.properties?.id}
+                  {expandedNode?.properties?.text ?? expandedNode?.properties?.fileName ?? expandedNode?.properties?.id}
                 </ReactMarkdown>
                 </Drawer.Body>
             </Drawer>

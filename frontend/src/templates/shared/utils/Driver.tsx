@@ -83,6 +83,20 @@ export async function runQuery(query: string) {
         type: rel.type,
         properties: rel.properties,
       });
+      const rel2 = record.get('r2');
+      rels.push({
+        id: rel2.elementId,
+        start: rel2.start.low,
+        end: rel2.end.low,
+        type: rel2.type,
+        properties: rel2.properties,
+      });
+      const nodeDoc = record.get('d');
+      nodes.push({
+        id: nodeDoc.identity.low,
+        labels: nodeDoc.labels,
+        properties: nodeDoc.properties,
+      });
     }
     console.log(rels);
     return { nodes: nodes, rels: rels };

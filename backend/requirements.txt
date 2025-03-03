@@ -1,0 +1,5 @@
+neo4j-driver
+neo4j-graphrag
+python-dotenv
+"neo4j-graphrag[openai]"
+"fastapi[standard]"

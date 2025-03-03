@@ -70,7 +70,7 @@ type User = {
 const chatBotAPI = async (question: string) => {
   try {
     const startTime = Date.now();
-    const response: any = await axios.post(`http://localhost:8001/ask`, {
+    const response: any = await axios.post(import.meta.env.VITE_BACKEND_URL, {
       question: question,
     });
     const endTime = Date.now();
@@ -230,7 +230,7 @@ export default function Chatbot(props: ChatbotProps) {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    //messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
