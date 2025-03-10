@@ -4,3 +4,4 @@ backend/path/
 frontend/dist/
 frontend/node_modules/
 data/
+backend/.venv/
