@@ -67,11 +67,12 @@ type User = {
   token?: string;
 };
 
-const chatBotAPI = async (question: string) => {
+const chatBotAPI = async (question: string, sessionId?: string) => {
   try {
     const startTime = Date.now();
     const response: any = await axios.post(import.meta.env.VITE_BACKEND_URL, {
       question: question,
+      session_id: sessionId || sessionStorage.getItem('session_id')
     });
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
@@ -210,7 +211,7 @@ export default function Chatbot(props: ChatbotProps) {
     let chatSources;
     let chatModel;
     let chatEntities;
-    const callAxios = await chatBotAPI(inputMessage);
+    const callAxios = await chatBotAPI(inputMessage, sessionId);
     const chatresponse = callAxios.response;
     let chatbotReply = chatresponse.response;
     chatSources = chatresponse.src.flatMap((source: { listIds: string[] }) => source.listIds);
