@@ -94,7 +94,7 @@ export default function Chatbot(props: ChatbotProps) {
   const [negativeFeedbackMessage, setNegativefeedbackMessage] = useState<string>('');
   const [loadingFeedback, setLoadingFeedback] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<AudioInfo[]>([]);
-  const [sessionId, setSessionId] = useState<string>(sessionStorage.getItem('session_id') ?? '');
+  const [sessionId, setSessionId] = useState<string>(uuidv4());
   const [loadingPlaying, setLoadingPlaying] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const handleCloseModal = () => setIsOpenModal(false);

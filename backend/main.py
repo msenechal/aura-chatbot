@@ -95,12 +95,6 @@ def ask_question(request: Request, question: Question):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/new_session")
-def create_new_session():
-    """Endpoint to generate a new session ID"""
-    new_session_id = str(uuid.uuid4())
-    return {"session_id": new_session_id}
-
 @app.on_event("shutdown")
 def shutdown_event():
     driver.close()
