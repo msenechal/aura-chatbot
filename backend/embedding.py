@@ -1,13 +1,8 @@
 from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
-from dotenv import load_dotenv
-import os
+from config import OPENAI_API_KEY, NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD
 
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
+api_key = OPENAI_API_KEY
 
 embedder = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
 
