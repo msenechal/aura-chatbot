@@ -5,7 +5,6 @@ import neo4j
 from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from neo4j_graphrag.generation import GraphRAG
-from neo4j_graphrag.llm import OpenAILLM
 from neo4j_graphrag.retrievers import VectorCypherRetriever
 from neo4j_graphrag.types import RetrieverResultItem
 from pydantic import BaseModel, Field
@@ -18,6 +17,7 @@ from config import (NEO4J_URI,
                     OPENAI_API_KEY, 
                     VECTOR_INDEX_NAME, 
                     ALLOWED_ORIGINS)
+from llm import create_llm
 
 api_key = OPENAI_API_KEY
 
@@ -38,7 +38,7 @@ retriever = VectorCypherRetriever(
     neo4j_database='neo4j',
 )
 
-llm = OpenAILLM(model_name="o3-mini", model_params={}, api_key=api_key)
+llm = create_llm
 
 rag = GraphRAG(retriever=retriever, llm=llm)
 
