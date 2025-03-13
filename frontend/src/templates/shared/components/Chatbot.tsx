@@ -67,11 +67,12 @@ type User = {
   token?: string;
 };
 
-const chatBotAPI = async (question: string) => {
+const chatBotAPI = async (question: string, sessionId?: string) => {
   try {
     const startTime = Date.now();
     const response: any = await axios.post(import.meta.env.VITE_BACKEND_URL, {
       question: question,
+      session_id: sessionId || sessionStorage.getItem('session_id')
     });
     const endTime = Date.now();
     const timeTaken = endTime - startTime;
@@ -93,7 +94,7 @@ export default function Chatbot(props: ChatbotProps) {
   const [negativeFeedbackMessage, setNegativefeedbackMessage] = useState<string>('');
   const [loadingFeedback, setLoadingFeedback] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<AudioInfo[]>([]);
-  const [sessionId, setSessionId] = useState<string>(sessionStorage.getItem('session_id') ?? '');
+  const [sessionId, setSessionId] = useState<string>(uuidv4());
   const [loadingPlaying, setLoadingPlaying] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const handleCloseModal = () => setIsOpenModal(false);
@@ -210,7 +211,7 @@ export default function Chatbot(props: ChatbotProps) {
     let chatSources;
     let chatModel;
     let chatEntities;
-    const callAxios = await chatBotAPI(inputMessage);
+    const callAxios = await chatBotAPI(inputMessage, sessionId);
     const chatresponse = callAxios.response;
     let chatbotReply = chatresponse.response;
     chatSources = chatresponse.src.flatMap((source: { listIds: string[] }) => source.listIds);
