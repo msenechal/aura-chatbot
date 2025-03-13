@@ -1,5 +1,4 @@
 import os
-import uuid
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
@@ -60,11 +59,6 @@ app.add_middleware(
 class Question(BaseModel):
     question: str
     session_id: str = None
-    
-    def __init__(self, **data):
-        super().__init__(**data)
-        if self.session_id is None:
-            self.session_id = str(uuid.uuid4())
 
 @app.post("/ask")
 def ask_question(request: Request, question: Question):
