@@ -1,6 +1,4 @@
 import os
-
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import neo4j
@@ -14,16 +12,14 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 from chat_history import create_message_history
+from config import (NEO4J_URI, 
+                    NEO4J_USERNAME, 
+                    NEO4J_PASSWORD, 
+                    OPENAI_API_KEY, 
+                    VECTOR_INDEX_NAME, 
+                    ALLOWED_ORIGINS)
 
-load_dotenv()
-
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-VECTOR_INDEX_NAME = os.getenv("VECTOR_INDEX_NAME")
-ALLOWED_ORIGINS = ["https://sites.google.com/neotechnology.com/", "https://*.googleusercontent.com", "https://neo4j-aura-qa-chatbot.com"]
-
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = OPENAI_API_KEY
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 
