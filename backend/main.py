@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import neo4j
-from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from neo4j_graphrag.generation import GraphRAG
 from neo4j_graphrag.retrievers import VectorCypherRetriever
@@ -10,17 +9,15 @@ from pydantic import BaseModel, Field
 import uvicorn
 
 from chat_history import create_message_history
-from config import (NEO4J_URI, 
-                    NEO4J_USERNAME, 
-                    NEO4J_PASSWORD, 
-                    OPENAI_API_KEY, 
+from config import (OPENAI_API_KEY, 
                     VECTOR_INDEX_NAME, 
                     ALLOWED_ORIGINS)
 from llm import create_llm
+from driver import create_driver
 
 api_key = OPENAI_API_KEY
 
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
+driver = create_driver
 
 embedder = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
 
