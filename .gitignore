@@ -6,5 +6,5 @@ frontend/.env
 frontend/dist/
 frontend/node_modules/
 frontend\yarn.lock
-frontend\package.json
+frontend\package-lock.json
 data/
