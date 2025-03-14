@@ -1,9 +1,9 @@
 from neo4j_graphrag.generation import GraphRAG
-from llm import create_llm
+from llm import LLM
 from retriever import create_retriever
 
 
-llm = create_llm
+llm = LLM.get_instance().llm
 retriever = create_retriever
 
 def create_rag():

@@ -1,9 +1,19 @@
 from neo4j_graphrag.llm import OpenAILLM
-from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from config import OPENAI_API_KEY
 
-def create_llm():
-    return OpenAILLM(model_name="o3-mini", model_params={}, api_key=OPENAI_API_KEY)
+class LLM:
 
-def create_embedder():
-    return OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY)
+    _instance = None
+
+    def __init__(self, model_name, model_params, api_key):
+        self._llm = OpenAILLM(model_name, model_params, api_key)
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls("o3-mini", {}, OPENAI_API_KEY)
+        return cls._instance
+    
+    @property
+    def llm(self):
+        return self._llm

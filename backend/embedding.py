@@ -1,34 +1,20 @@
+from neo4j_graphrag.embeddings import OpenAIEmbeddings
 from config import OPENAI_API_KEY
-from llm import create_embedder
-from driver import Neo4jDriver
 
-api_key = OPENAI_API_KEY
+class Embedding:
 
-embedder = create_embedder
+    _instance = None
 
-driver = Neo4jDriver.get_instance().driver
+    def __init__(self, model, api_key):
+        self._embedder = OpenAIEmbeddings(model, api_key)
 
-with driver.session() as session:
-    res = session.run(
-        """
-        MATCH (e:Chunk)
-        WHERE e.text IS NOT NULL AND e.morganEmbedding IS NULL
-        RETURN e.id as id, e.text as data
-        """
-    )
-    for record in res:
-        chunk_id = record["id"]
-        data = record["data"]
-        if len(data) > 12000:
-            print(f"Skipping chunks {chunk_id} with data length {len(data)}")
-            continue
-        print(f"Embedding chunk {chunk_id}")
-        embedding = embedder.embed_query(data)
-        session.run(
-            """
-            MATCH (e:Chunk {id: $chunk_id})
-            SET e.morganEmbedding = $embedding
-            """,
-            chunk_id=chunk_id,
-            embedding=embedding
-        )
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls("text-embedding-ada-002", OPENAI_API_KEY)
+        return cls._instance
+    
+    @property
+    def embedder(self):
+        return self._embedder
+      
