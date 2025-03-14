@@ -1,12 +1,12 @@
-from neo4j import GraphDatabase
-from neo4j_graphrag.embeddings import OpenAIEmbeddings
-from config import OPENAI_API_KEY, NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD
+from config import OPENAI_API_KEY
+from llm import create_embedder
+from driver import create_driver
 
 api_key = OPENAI_API_KEY
 
-embedder = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
+embedder = create_embedder
 
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
+driver = create_driver
 
 with driver.session() as session:
     res = session.run(

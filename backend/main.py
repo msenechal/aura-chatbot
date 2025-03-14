@@ -12,14 +12,14 @@ from chat_history import create_message_history
 from config import (OPENAI_API_KEY, 
                     VECTOR_INDEX_NAME, 
                     ALLOWED_ORIGINS)
-from llm import create_llm
+from llm import create_llm, create_embedder
 from driver import create_driver
 
 api_key = OPENAI_API_KEY
 
 driver = create_driver
 
-embedder = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
+embedder = create_embedder
 
 def formatter(record: neo4j.Record) -> RetrieverResultItem:
     return RetrieverResultItem(content=f'{record.get("nodeText")}: score {record.get("score")}', metadata={"listIds": record.get("listIds")})
