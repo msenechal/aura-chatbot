@@ -1,12 +1,12 @@
 import uvicorn
 
 from config import (OPENAI_API_KEY)
-from driver import create_driver
+from driver import Neo4jDriver
 from api import create_api
 
 
 api_key = OPENAI_API_KEY
-driver = create_driver
+driver = Neo4jDriver.get_instance().driver
 app = create_api
 
 @app.on_event("shutdown")

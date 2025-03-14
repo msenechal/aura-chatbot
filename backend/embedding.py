@@ -1,12 +1,12 @@
 from config import OPENAI_API_KEY
 from llm import create_embedder
-from driver import create_driver
+from driver import Neo4jDriver
 
 api_key = OPENAI_API_KEY
 
 embedder = create_embedder
 
-driver = create_driver
+driver = Neo4jDriver.get_instance().driver
 
 with driver.session() as session:
     res = session.run(
