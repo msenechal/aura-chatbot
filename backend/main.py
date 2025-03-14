@@ -1,22 +1,22 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from neo4j_graphrag.generation import GraphRAG
+
 
 from pydantic import BaseModel, Field
 import uvicorn
 
 from chat_history import create_message_history
 from config import (OPENAI_API_KEY, ALLOWED_ORIGINS)
-from llm import create_llm, create_embedder
-from retriever import create_retriever
+from llm import create_embedder
+from driver import create_driver
+from agent import create_rag
+
 
 api_key = OPENAI_API_KEY
 embedder = create_embedder
-retriever = create_retriever
-llm = create_llm
-
-rag = GraphRAG(retriever=retriever, llm=llm)
+driver = create_driver
+rag = create_rag
 
 app = FastAPI()
 

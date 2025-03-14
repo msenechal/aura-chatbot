@@ -5,9 +5,7 @@ from config import VECTOR_INDEX_NAME
 from driver import create_driver
 from llm import create_embedder
 
-
 RETRIEVAL_QUERY = "with node, score OPTIONAL MATCH (node)-[]-(e:__Entity__) return collect(elementId(node))+collect(elementId(e)) as listIds, node.text as nodeText, score"
-
 
 def formatter(record: neo4j.Record) -> RetrieverResultItem:
     return RetrieverResultItem(content=f'{record.get("nodeText")}: score {record.get("score")}', metadata={"listIds": record.get("listIds")})
