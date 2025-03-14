@@ -1,39 +1,21 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-import neo4j
-from neo4j_graphrag.embeddings import OpenAIEmbeddings
+
 from neo4j_graphrag.generation import GraphRAG
-from neo4j_graphrag.retrievers import VectorCypherRetriever
-from neo4j_graphrag.types import RetrieverResultItem
+
+
 from pydantic import BaseModel, Field
 import uvicorn
 
 from chat_history import create_message_history
-from config import (OPENAI_API_KEY, 
-                    VECTOR_INDEX_NAME, 
-                    ALLOWED_ORIGINS)
+from config import (OPENAI_API_KEY, ALLOWED_ORIGINS)
 from llm import create_llm, create_embedder
-from driver import create_driver
+from retriever import create_retriever
+
 
 api_key = OPENAI_API_KEY
-
-driver = create_driver
-
 embedder = create_embedder
-
-def formatter(record: neo4j.Record) -> RetrieverResultItem:
-    return RetrieverResultItem(content=f'{record.get("nodeText")}: score {record.get("score")}', metadata={"listIds": record.get("listIds")})
-
-RETRIEVAL_QUERY = "with node, score OPTIONAL MATCH (node)-[]-(e:__Entity__) return collect(elementId(node))+collect(elementId(e)) as listIds, node.text as nodeText, score"
-retriever = VectorCypherRetriever(
-    driver,
-    index_name=VECTOR_INDEX_NAME,
-    retrieval_query=RETRIEVAL_QUERY,
-    result_formatter=formatter,
-    embedder=embedder,
-    neo4j_database='neo4j',
-)
-
+retriever = create_retriever
 llm = create_llm
 
 rag = GraphRAG(retriever=retriever, llm=llm)
