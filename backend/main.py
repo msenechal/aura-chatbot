@@ -2,11 +2,13 @@ import uvicorn
 
 from config import (OPENAI_API_KEY)
 from driver import Neo4jDriver
+from embedding import Embedding
 from api import create_api
 
 
 api_key = OPENAI_API_KEY
 driver = Neo4jDriver.get_instance().driver
+embedder = Embedding.get_instance().embedder
 app = create_api
 
 @app.on_event("shutdown")
