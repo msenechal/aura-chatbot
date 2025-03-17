@@ -7,7 +7,6 @@ class MessageHistory:
         self._driver = driver
         self._window = window
 
-
     def create_history(self, session_id = None):
         history = Neo4jMessageHistory(
             session_id=session_id,

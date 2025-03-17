@@ -1,10 +1,20 @@
 from neo4j_graphrag.generation import GraphRAG
-from llm import LLM
-from retriever import create_retriever
 
+class Agent:
 
-llm = LLM.get_instance().llm
-retriever = create_retriever
+    _instance = None
 
-def create_rag():
-    return GraphRAG(retriever=retriever, llm=llm)
+    def __init__(self, retriever, llm):
+        self._retriever = retriever
+        self._llm = llm
+        self._rag = GraphRAG(retriever=self._retriever, llm=self._llm)
+
+    @classmethod
+    def get_instance(cls, retriever, llm):
+        if cls._instance is None:
+            cls._instance = cls(retriever, llm)
+        return cls._instance
+    
+    @property
+    def rag(self):
+        return self._rag
