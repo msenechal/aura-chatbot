@@ -1,5 +1,4 @@
 from neo4j import GraphDatabase
-from config import NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD
 
 class Neo4jDriver:
     
@@ -10,9 +9,9 @@ class Neo4jDriver:
         self._driver = GraphDatabase.driver(uri, auth=(username, password))
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, uri=None, username=None, password=None):
         if cls._instance is None:
-            cls._instance = cls(NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD)
+            cls._instance = cls(uri, username, password)
         return cls._instance
 
     @property

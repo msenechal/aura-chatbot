@@ -1,7 +1,6 @@
 import neo4j
 from neo4j_graphrag.retrievers import VectorCypherRetriever
 from neo4j_graphrag.types import RetrieverResultItem
-from config import VECTOR_INDEX_NAME
 
 class Retriever:
     
@@ -27,9 +26,9 @@ class Retriever:
         )
     
     @classmethod
-    def get_instance(cls,driver, embedder):
+    def get_instance(cls, driver, embedder, index_name=None):
         if cls._instance is None:
-            cls._instance = cls(driver, embedder, VECTOR_INDEX_NAME)
+            cls._instance = cls(driver, embedder, index_name)
         return cls._instance
     
     @property

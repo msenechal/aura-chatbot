@@ -1,5 +1,4 @@
 from neo4j_graphrag.llm import OpenAILLM
-from config import OPENAI_API_KEY
 
 class LLM:
 
@@ -9,9 +8,11 @@ class LLM:
         self._llm = OpenAILLM(model_name=model_name, model_params=model_params, api_key=api_key)
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, model_params=None, model_name="o3-mini", api_key=None):
+        if model_params is None:
+            model_params = {}
         if cls._instance is None:
-            cls._instance = cls("o3-mini", {}, OPENAI_API_KEY)
+            cls._instance = cls(model_name, model_params, api_key)
         return cls._instance
     
     @property

@@ -1,5 +1,4 @@
 from neo4j_graphrag.embeddings import OpenAIEmbeddings
-from config import OPENAI_API_KEY
 
 class Embedding:
 
@@ -9,9 +8,9 @@ class Embedding:
         self._embedder = OpenAIEmbeddings(model=model, api_key=api_key)
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, model="text-embedding-ada-002", api_key=None):
         if cls._instance is None:
-            cls._instance = cls("text-embedding-ada-002", OPENAI_API_KEY)
+            cls._instance = cls(model, api_key)
         return cls._instance
     
     @property

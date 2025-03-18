@@ -1,27 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from config import ALLOWED_ORIGINS
+
 
 class API:
 
     _instance = None
 
-    def __init__(self):
+    def __init__(self, allowed_origins):
 
         self._app = FastAPI()
 
         self._app.add_middleware(
             CORSMiddleware,
-            allow_origins=ALLOWED_ORIGINS,
+            allow_origins=allowed_origins,
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
         )
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls, allowed_origins=None):
         if cls._instance is None:
-            cls._instance = cls()
+            cls._instance = cls(allowed_origins)
         return cls._instance
 
     @property
