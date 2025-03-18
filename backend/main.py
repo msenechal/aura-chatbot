@@ -7,8 +7,6 @@ from retriever import Retriever
 from llm import LLM
 from chat_history import MessageHistory
 from agent import Agent
-from api import create_api
-
 
 api_key = OPENAI_API_KEY
 
