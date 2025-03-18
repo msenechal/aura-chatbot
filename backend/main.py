@@ -43,6 +43,7 @@ retriever = retriever_instance.retriever
 llm_instance = LLM.get_instance(
     api_key=OPENAI_API_KEY
 )
+
 llm = llm_instance.llm
 
 agent_instance = Agent.get_instance(
