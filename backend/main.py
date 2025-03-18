@@ -1,11 +1,13 @@
 import uvicorn
 
-from config import (NEO4J_URI, 
-                    NEO4J_USERNAME, 
-                    NEO4J_PASSWORD,
-                    OPENAI_API_KEY,
-                    VECTOR_INDEX_NAME,
-                    ALLOWED_ORIGINS)
+from config import (
+    NEO4J_URI, 
+    NEO4J_USERNAME, 
+    NEO4J_PASSWORD,
+    OPENAI_API_KEY,
+    VECTOR_INDEX_NAME,
+    ALLOWED_ORIGINS
+)
 
 from driver import Neo4jDriver
 from embedding import Embedding
@@ -24,7 +26,10 @@ driver_instance = Neo4jDriver.get_instance(
 
 driver = driver_instance.driver
 
-embedder_instance = Embedding.get_instance(api_key=OPENAI_API_KEY)
+embedder_instance = Embedding.get_instance(
+    api_key=OPENAI_API_KEY
+)
+
 embedder = embedder_instance.embedder
 
 retriever_instance = Retriever.get_instance(
@@ -35,15 +40,26 @@ retriever_instance = Retriever.get_instance(
 
 retriever = retriever_instance.retriever
 
-llm_instance = LLM.get_instance(api_key=OPENAI_API_KEY)
+llm_instance = LLM.get_instance(
+    api_key=OPENAI_API_KEY
+)
 llm = llm_instance.llm
 
-agent_instance = Agent.get_instance(retriever=retriever, llm=llm)
+agent_instance = Agent.get_instance(
+    retriever=retriever, 
+    llm=llm
+)
+
 rag = agent_instance.rag
 
-message_history = MessageHistory(driver=driver)
+message_history = MessageHistory(
+    driver=driver
+)
 
-api_instance = API.get_instance(allowed_origins=ALLOWED_ORIGINS)
+api_instance = API.get_instance(
+    allowed_origins=ALLOWED_ORIGINS
+)
+
 app = api_instance.app
 
 routes = Routes(
