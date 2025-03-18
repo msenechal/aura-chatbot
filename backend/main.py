@@ -1,12 +1,14 @@
 import uvicorn
 
-from config import (OPENAI_API_KEY)
+from config import OPENAI_API_KEY
 from driver import Neo4jDriver
 from embedding import Embedding
 from retriever import Retriever
 from llm import LLM
 from chat_history import MessageHistory
 from agent import Agent
+from api import API
+from routes import Routes
 
 api_key = OPENAI_API_KEY
 
@@ -26,6 +28,11 @@ agent_instance = Agent.get_instance(retriever=retriever, llm=llm)
 rag = agent_instance.rag
 
 message_history = MessageHistory(driver=driver)
+
+api_instance = API.get_instance()
+app = api_instance.app
+
+routes = Routes(app=app, rag=rag, message_history=message_history)
 
 @app.on_event("shutdown")
 def shutdown_event():

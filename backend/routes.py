@@ -3,13 +3,14 @@ from question import Question
 from config import ALLOWED_ORIGINS
 
 class Routes:
+    
     def __init__(self, app, rag, message_history):
         self._app = app
         self._rag = rag
         self._message_history = message_history
         self._register_routes()
 
-    def register_routes(self):
+    def _register_routes(self):
         @self._app.post("/ask")
         def ask_question(request: Request, question: Question):
             try:
@@ -17,7 +18,7 @@ class Routes:
                 if not any(allowed in referer for allowed in ALLOWED_ORIGINS):
                     raise HTTPException(status_code=403, detail="Forbidden: Invalid referrer")
                 
-                history, _, current_session_id = self._message_history.create_message_history(session_id=question.session_id)
+                history, _, current_session_id = self._message_history.create_history(session_id=question.session_id)
 
                 input = question.question
                 response = self._rag.search(
