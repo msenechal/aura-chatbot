@@ -6,7 +6,7 @@ class LLM:
     _instance = None
 
     def __init__(self, model_name, model_params, api_key):
-        self._llm = OpenAILLM(model_name, model_params, api_key)
+        self._llm = OpenAILLM(model_name=model_name, model_params=model_params, api_key=api_key)
 
     @classmethod
     def get_instance(cls):

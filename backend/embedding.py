@@ -6,7 +6,7 @@ class Embedding:
     _instance = None
 
     def __init__(self, model, api_key):
-        self._embedder = OpenAIEmbeddings(model, api_key)
+        self._embedder = OpenAIEmbeddings(model=model, api_key=api_key)
 
     @classmethod
     def get_instance(cls):
