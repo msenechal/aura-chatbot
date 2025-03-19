@@ -6,7 +6,13 @@ class Retriever:
     
     _instance = None
 
-    RETRIEVAL_QUERY = "with node, score OPTIONAL MATCH (node)-[]-(e:__Entity__) return collect(elementId(node))+collect(elementId(e)) as listIds, node.text as nodeText, score"
+    RETRIEVAL_QUERY = (
+        """
+        with node, score OPTIONAL MATCH (node)-[]-(e:!Chunk&!Document) 
+        return collect(elementId(node))+collect(elementId(e)) as listIds, 
+        collect(e.id) as contextNodes, node.text as nodeText, score
+        """
+    )
 
     def __init__(self, driver, embedder, index_name):
         self._retreiver = VectorCypherRetriever(
@@ -20,9 +26,18 @@ class Retriever:
 
     @staticmethod
     def formatter(record: neo4j.Record) -> RetrieverResultItem:
+        node_text = record.get("nodeText")
+        score = record.get("score")
+        list_ids = record.get("listIds")
+        context_nodes = record.get("contextNodes")
+
         return RetrieverResultItem(
-            content=f'{record.get("nodeText")}: score {record.get("score")}', 
-            metadata={"listIds": record.get("listIds")}
+            content=f'{node_text}: score {score}', 
+            metadata={
+                "listIds": list_ids,
+                "contextNodes": context_nodes,
+                "nodeText": node_text
+            }
         )
     
     @classmethod

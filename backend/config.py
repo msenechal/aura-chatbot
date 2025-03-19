@@ -16,6 +16,4 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 VECTOR_INDEX_NAME = os.getenv("VECTOR_INDEX_NAME")
 
 # API Config
-ALLOWED_ORIGINS = ["https://sites.google.com/neotechnology.com/", 
-                   "https://*.googleusercontent.com", 
-                   "https://neo4j-aura-qa-chatbot.com,"]
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
