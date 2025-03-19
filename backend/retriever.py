@@ -32,10 +32,9 @@ class Retriever:
         context_nodes = record.get("contextNodes")
 
         return RetrieverResultItem(
-            content=f'{node_text}: score {score}', 
+            content=f"{node_text}: score {score}, Related context: {context_nodes}", 
             metadata={
                 "listIds": list_ids,
-                "contextNodes": context_nodes,
                 "nodeText": node_text
             }
         )

@@ -16,4 +16,4 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 VECTOR_INDEX_NAME = os.getenv("VECTOR_INDEX_NAME")
 
 # API Config
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
