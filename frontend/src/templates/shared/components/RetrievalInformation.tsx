@@ -39,7 +39,7 @@ function RetrievalInformation({ sources, model, entities, timeTaken }) {
 
   useEffect(() => {
     run();
-    setLoading(false);
+  
   }, []);
 
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -112,6 +112,7 @@ function RetrievalInformation({ sources, model, entities, timeTaken }) {
             },
           ]);
         });
+        setLoading(false);
       });
     });
   }

@@ -1,99 +1,74 @@
-import os
-import uuid
-
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-import neo4j
-from neo4j import GraphDatabase
-from neo4j_graphrag.embeddings import OpenAIEmbeddings
-from neo4j_graphrag.generation import GraphRAG
-from neo4j_graphrag.llm import OpenAILLM
-from neo4j_graphrag.retrievers import VectorCypherRetriever
-from neo4j_graphrag.types import RetrieverResultItem
-from pydantic import BaseModel, Field
 import uvicorn
 
-from chat_history import create_message_history
+from config import (
+    NEO4J_URI, 
+    NEO4J_USERNAME, 
+    NEO4J_PASSWORD,
+    OPENAI_API_KEY,
+    VECTOR_INDEX_NAME,
+    ALLOWED_ORIGINS
+)
 
-load_dotenv()
+from driver import Neo4jDriver
+from embedding import Embedding
+from retriever import Retriever
+from llm import LLM
+from chat_history import MessageHistory
+from agent import Agent
+from api import API
+from routes import Routes
 
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-VECTOR_INDEX_NAME = os.getenv("VECTOR_INDEX_NAME")
-ALLOWED_ORIGINS = ["https://sites.google.com/neotechnology.com/", "https://*.googleusercontent.com", "https://neo4j-aura-qa-chatbot.com"]
+driver_instance = Neo4jDriver.get_instance(
+    uri=NEO4J_URI,
+    username=NEO4J_USERNAME,
+    password=NEO4J_PASSWORD
+)
 
-api_key = os.getenv("OPENAI_API_KEY")
+driver = driver_instance.driver
 
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
+embedder_instance = Embedding.get_instance(
+    api_key=OPENAI_API_KEY
+)
 
-embedder = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
+embedder = embedder_instance.embedder
 
-def formatter(record: neo4j.Record) -> RetrieverResultItem:
-    return RetrieverResultItem(content=f'{record.get("nodeText")}: score {record.get("score")}', metadata={"listIds": record.get("listIds")})
-
-RETRIEVAL_QUERY = "with node, score OPTIONAL MATCH (node)-[]-(e:__Entity__) return collect(elementId(node))+collect(elementId(e)) as listIds, node.text as nodeText, score"
-retriever = VectorCypherRetriever(
-    driver,
-    index_name=VECTOR_INDEX_NAME,
-    retrieval_query=RETRIEVAL_QUERY,
-    result_formatter=formatter,
+retriever_instance = Retriever.get_instance(
+    driver=driver, 
     embedder=embedder,
-    neo4j_database='neo4j',
+    index_name=VECTOR_INDEX_NAME
 )
 
-llm = OpenAILLM(model_name="o3-mini", model_params={}, api_key=api_key)
+retriever = retriever_instance.retriever
 
-rag = GraphRAG(retriever=retriever, llm=llm)
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+llm_instance = LLM.get_instance(
+    api_key=OPENAI_API_KEY
 )
 
-class Question(BaseModel):
-    question: str
-    session_id: str = None
-    
-    def __init__(self, **data):
-        super().__init__(**data)
-        if self.session_id is None:
-            self.session_id = str(uuid.uuid4())
+llm = llm_instance.llm
 
-@app.post("/ask")
-def ask_question(request: Request, question: Question):
-    try:
-        referer = request.headers.get("referer", "")
-        if not any(allowed in referer for allowed in ALLOWED_ORIGINS):
-            raise HTTPException(status_code=403, detail="Forbidden: Invalid referrer")
-        
-        history, _, current_session_id = create_message_history(session_id=question.session_id)
+agent_instance = Agent.get_instance(
+    retriever=retriever, 
+    llm=llm
+)
 
-        input = question.question
-        response = rag.search(
-            query_text=input, 
-            retriever_config={"top_k": 10}, 
-            return_context=True,
-            message_history=history
-        )
-        
-        history.add_message({"role": "user", "content": input})
-        history.add_message({"role": "assistant", "content": response.answer})
-        
-        print(f"{question.question}")
-        src = []
-        for item in response.retriever_result.items:
-            src.append(item.metadata)
-            
-        return {"response": response.answer, "src": src, "session_id": current_session_id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+rag = agent_instance.rag
+
+message_history = MessageHistory(
+    driver=driver
+)
+
+api_instance = API.get_instance(
+    allowed_origins=ALLOWED_ORIGINS
+)
+
+app = api_instance.app
+
+routes = Routes(
+    app=app, 
+    rag=rag, 
+    message_history=message_history, 
+    allowed_origins=ALLOWED_ORIGINS
+)
 
 @app.on_event("shutdown")
 def shutdown_event():
