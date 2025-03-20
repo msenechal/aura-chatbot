@@ -79,9 +79,9 @@ function RetrievalInformation({ sources, model, entities, timeTaken }) {
     const formattedSources = sources.map((source) => `"${source}"`).join(',');
     const query2 = `  
     MATCH (a:Chunk)-[r2:PART_OF]-(d:Document) WHERE elementId(a) in [${formattedSources}]
-    MATCH (a)-[r]-(b:__Entity__)
+    MATCH (a)-[r]-(b)
     WHERE elementId(b) IN [${formattedSources}]
-    RETURN a, r, b, r2, d LIMIT 100
+    RETURN a, r, b, r2, d LIMIT 1000
 
     `;
     setDriver(uri, username, password).then((isSuccessful) => {
