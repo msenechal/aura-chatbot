@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Request
-from question import Question
+from app.api.question import Question
 
 class Routes:
     
